@@ -30,8 +30,8 @@ if original_file and user_file:
     st.pyplot(fig)
 
     # Compute MFCCs (Mel-frequency cepstral coefficients) for pitch comparison
-    mfcc_original = librosa.feature.mfcc(y_original, sr=sr_original)
-    mfcc_user = librosa.feature.mfcc(y_user, sr=sr_user)
+    mfcc_original = librosa.feature.mfcc(y=y_original, sr=sr_original)
+    mfcc_user = librosa.feature.mfcc(y=y_user, sr=sr_user)
 
     # Ensure correct shape for DTW
     original_mfcc = mfccs_original.reshape(1, -1) if mfccs_original.ndim == 1 else mfccs_original
