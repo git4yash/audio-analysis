@@ -43,7 +43,8 @@ if original_file and user_file:
 
     # Compute DTW (Dynamic Time Warping) for rhythm comparison
     dtw_result = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y))
-    distance = dtw_result.distance  # Get the distance
+    st.write(dtw_result)
+    distance = dtw_result.dist  # Get the distance
     path = dtw_result.index  # Get the path (index)
 
     # Display the MFCC comparison
