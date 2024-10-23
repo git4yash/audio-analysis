@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from dtw import dtw
 from scipy.spatial.distance import euclidean
-
+        
 st.title("Vocal Performance Comparison Tool")
 
 # Upload original and user audio files
@@ -69,6 +69,48 @@ if original_file and user_file:
     ax.plot(pitches_original.mean(axis=1), label="Original Pitch")
     ax.plot(pitches_user.mean(axis=1), label="User Pitch")
     ax.legend(loc='upper right')
+    st.pyplot(fig)
+
+    ## Volume (Amplitude) Analysis
+    # Compute RMS (Root Mean Square) for volume analysis
+    def compute_rms(y):
+        return np.sqrt(np.mean(y**2))
+        
+    rms_original = compute_rms(y_original)
+    rms_user = compute_rms(y_user)
+
+    st.write(f"RMS Volume of Original Audio: {rms_original:.2f}")
+    st.write(f"RMS Volume of User's Audio: {rms_user:.2f}")
+
+    # Visualize RMS
+    fig, ax = plt.subplots()
+    ax.bar(['Original', 'User'], [rms_original, rms_user])
+    ax.set_ylabel('RMS Amplitude')
+    st.pyplot(fig)
+
+    ## Timber
+    # Compute spectral features for timbre analysis
+    spectral_centroid_original = librosa.feature.spectral_centroid(y=y_original, sr=sr_original)
+    spectral_centroid_user = librosa.feature.spectral_centroid(y=y_user, sr=sr_user)
+
+    # Visualize spectral centroid
+    fig, ax = plt.subplots()
+    ax.plot(spectral_centroid_original.T, label='Original Centroid')
+    ax.plot(spectral_centroid_user.T, label='User Centroid')
+    ax.set_ylabel('Spectral Centroid (Hz)')
+    ax.legend()
+    st.pyplot(fig)
+
+    # Compute spectral bandwidth for both audio files
+    bandwidth_original = librosa.feature.spectral_bandwidth(y=y_original, sr=sr_original)
+    bandwidth_user = librosa.feature.spectral_bandwidth(y=y_user, sr=sr_user)
+
+    # Visualize spectral bandwidth
+    fig, ax = plt.subplots()
+    ax.plot(bandwidth_original.T, label='Original Bandwidth')
+    ax.plot(bandwidth_user.T, label='User Bandwidth')
+    ax.set_ylabel('Spectral Bandwidth (Hz)')
+    ax.legend()
     st.pyplot(fig)
 
     st.success("Analysis Complete!")
