@@ -43,7 +43,6 @@ if original_file and user_file:
 
     # Compute DTW (Dynamic Time Warping) for rhythm comparison
     dtw_result = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y))
-    st.write(dtw_result)
     
     # dtw_result is a tuple
     distance = dtw_result[0]  # First element is the distance
