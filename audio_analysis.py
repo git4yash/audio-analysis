@@ -214,6 +214,7 @@ if original_file and user_file:
         
     ## With radio button for selection
     # Radio button to select which attribute to display
+    volume_diff = np.abs(rms_original - rms_user)
     attribute = st.radio(
         "Select the attribute to display on the graph:",
         ("Pitch Difference", "Volume Difference")
