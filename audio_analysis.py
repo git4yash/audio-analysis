@@ -46,13 +46,6 @@ if original_file and user_file:
     distance = dtw_result.distance  # Get the distance
     path = dtw_result.index  # Get the path (index)
 
-# Display the MFCC comparison
-st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
-
-    # Verify that the path is returned correctly
-    if isinstance(path, tuple):
-        path = path[0]  # Only take the first element if it's a tuple
-
     # Display the MFCC comparison
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
     
