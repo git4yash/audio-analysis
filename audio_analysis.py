@@ -148,6 +148,11 @@ if original_file and user_file:
     # Display plot
     st.pyplot(fig)
 
+    st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
+    st.write(f"Pitch difference: {pitch_diff:.2f} Hz")
+    st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
+    st.write(f"Spectral Centroid Difference: {np.mean(spectral_centroid_original - spectral_centroid_user):.2f} Hz")
+    st.write(f"Spectral Bandwidth Difference: {np.mean(bandwidth_original - bandwidth_user):.2f} Hz")
 
     ## New graph
     # Compute DTW for rhythm comparison
@@ -202,13 +207,12 @@ if original_file and user_file:
 
     # Display plot
     st.pyplot(fig)
-    ##
-        
+
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
-    st.write(f"Pitch difference: {pitch_diff:.2f} Hz")
+    st.write(f"Pitch difference (mean): {np.mean(pitch_diff):.2f} Hz")
     st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
-    st.write(f"Spectral Centroid Difference: {np.mean(spectral_centroid_original - spectral_centroid_user):.2f} Hz")
-    st.write(f"Spectral Bandwidth Difference: {np.mean(bandwidth_original - bandwidth_user):.2f} Hz")
+    ##
+
     st.success("Analysis Complete!")
 
 else:
