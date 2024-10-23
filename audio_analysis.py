@@ -33,8 +33,12 @@ if original_file and user_file:
     mfcc_original = librosa.feature.mfcc(y_original, sr=sr_original)
     mfcc_user = librosa.feature.mfcc(y_user, sr=sr_user)
 
+    # Ensure correct shape for DTW
+    original_mfcc = mfccs_original.reshape(1, -1) if mfccs_original.ndim == 1 else mfccs_original
+    user_mfcc = mfccs_user.reshape(1, -1) if mfccs_user.ndim == 1 else mfccs_user
+
     # Compute DTW (Dynamic Time Warping) for rhythm comparison
-    distance, path = dtw(mfcc_original.T, mfcc_user.T, dist=lambda x, y: np.linalg.norm(x - y, ord=1))
+    distance, path = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y, ord=1))
 
     # Display the MFCC comparison
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
