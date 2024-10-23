@@ -208,6 +208,50 @@ if original_file and user_file:
     # Display plot
     st.pyplot(fig)
 
+    ## With radio button for selection
+    # Radio button to select which attribute to display
+    attribute = st.radio(
+        "Select the attribute to display on the graph:",
+        ("Pitch Difference", "Volume Difference")
+    )
+
+    # Plot the selected attribute
+    fig, ax = plt.subplots()
+
+    # Plot waveforms in the background for both original and user
+    librosa.display.waveshow(y_original, sr=sr_original, ax=ax, label='Original', alpha=0.5)
+    librosa.display.waveshow(y_user, sr=sr_user, ax=ax, label='User', alpha=0.5)
+
+    # Plot the selected attribute
+    if attribute == "Pitch Difference":
+        # Plot pitch contours
+        ax2 = ax.twinx()  # Create a secondary y-axis for pitch
+        ax2.plot(time_axis, pitch_contour_original, label="Original Pitch", color='green', alpha=0.7)
+        ax2.plot(time_axis, pitch_contour_user, label="User Pitch", color='orange', alpha=0.7)
+        
+        # Highlight areas where tune needs improvement
+        for i, diff in enumerate(pitch_diff):
+            if diff > 1:  # 1 Hz threshold for significant difference
+                ax2.axvspan(time_axis[i], time_axis[i+1] if i+1 < len(time_axis) else time_axis[i], 
+                            color='red', alpha=0.3, label="Tune Correction Needed" if i == 0 else "")
+        
+        ax2.set_ylabel('Pitch (Hz)')
+        ax2.legend(loc='upper right')
+
+    elif attribute == "Volume Difference":
+        # Plot RMS volume for both original and user
+        ax.bar("Original Volume", rms_original, color='blue', alpha=0.7)
+        ax.bar("User Volume", rms_user, color='orange', alpha=0.7)
+        st.write(f"Volume Difference: {volume_diff:.2f}")
+    
+    ax.set_ylabel('Amplitude')
+    ax.set_xlabel('Time (s)')
+    ax.legend(loc='upper left')
+
+    # Display plot
+    st.pyplot(fig)
+##
+
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
     st.write(f"Pitch difference (mean): {np.mean(pitch_diff):.2f} Hz")
     st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
