@@ -113,6 +113,46 @@ if original_file and user_file:
     ax.legend()
     st.pyplot(fig)
 
+
+    # Create overlay plot
+    st.write("Performance Comparison Overlay:")
+
+    fig, ax = plt.subplots()
+
+    # Plot waveforms
+    librosa.display.waveshow(y_original, sr=sr_original, ax=ax, label='Original', alpha=0.5)
+    librosa.display.waveshow(y_user, sr=sr_user, ax=ax, label='User', alpha=0.5)
+
+    # Highlight areas where improvements are needed
+    diff_threshold = 0.1  # Set threshold for significant differences
+
+    # Overlay pitch differences
+    pitch_diffs = np.abs(pitches_original - pitches_user)
+    time_axis = np.linspace(0, len(y_original)/sr_original, num=len(pitch_diffs))
+    ax.plot(time_axis, pitch_diffs.mean(axis=1), color='red', label="Pitch Difference", alpha=0.7)
+
+    # Mark areas where the pitch difference exceeds the threshold
+    for i, diff in enumerate(pitch_diffs.mean(axis=1)):
+        if diff > diff_threshold:
+            ax.axvspan(time_axis[i], time_axis[i+1] if i+1 < len(time_axis) else time_axis[i],
+                       color='yellow', alpha=0.3, label="Pitch Correction Needed" if i == 0 else "")
+
+    # Overlay volume differences
+    time_original = np.linspace(0, len(y_original)/sr_original, num=len(y_original))
+    ax.plot(time_original, np.abs(y_original - y_user), color='blue', label="Volume Difference", alpha=0.7)
+
+    ax.set_ylabel('Amplitude / Pitch Difference')
+    ax.set_xlabel('Time (s)')
+    ax.legend()
+
+    # Display plot
+    st.pyplot(fig)
+
+    st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
+    st.write(f"Pitch difference: {pitch_diff:.2f} Hz")
+    st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
+    st.write(f"Spectral Centroid Difference: {np.mean(spectral_centroid_original - spectral_centroid_user):.2f} Hz")
+    st.write(f"Spectral Bandwidth Difference: {np.mean(bandwidth_original - bandwidth_user):.2f} Hz")
     st.success("Analysis Complete!")
 
 else:
