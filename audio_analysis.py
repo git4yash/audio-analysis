@@ -208,6 +208,10 @@ if original_file and user_file:
     # Display plot
     st.pyplot(fig)
 
+    st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
+    st.write(f"Pitch difference (mean): {np.mean(pitch_diff):.2f} Hz")
+    st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
+        
     ## With radio button for selection
     # Radio button to select which attribute to display
     attribute = st.radio(
@@ -250,11 +254,6 @@ if original_file and user_file:
 
     # Display plot
     st.pyplot(fig)
-##
-
-    st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
-    st.write(f"Pitch difference (mean): {np.mean(pitch_diff):.2f} Hz")
-    st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
     ##
 
     st.success("Analysis Complete!")
