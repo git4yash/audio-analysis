@@ -15,8 +15,8 @@ user_file = st.file_uploader("Upload the User's Audio", type=["wav", "mp3"])
 
 if original_file and user_file:
     # Load original and user audio using librosa
-    y_original, sr_original = librosa.load(original_file, sr=None)
-    y_user, sr_user = librosa.load(user_file, sr=None)
+    y_original, sr_original = librosa.load(y=original_file, sr=None)
+    y_user, sr_user = librosa.load(y=user_file, sr=None)
     
     # Display the waveforms
     st.write("Waveform of the Original Audio:")
@@ -37,13 +37,17 @@ if original_file and user_file:
     original_mfcc = mfccs_original.reshape(1, -1) if mfccs_original.ndim == 1 else mfccs_original
     user_mfcc = mfccs_user.reshape(1, -1) if mfccs_user.ndim == 1 else mfccs_user
 
+    # MFCCs are usually (n_mfcc, n_frames), transpose them for DTW
+    original_mfcc = mfcc_original.T
+    user_mfcc = mfcc_user.T
+
     # Compute DTW (Dynamic Time Warping) for rhythm comparison
     distance, path = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y, ord=1))
 
     # Display the MFCC comparison
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
     
-    # Show the DTW path
+    # Show the DTW path on the MFCC spectrogram of the original
     fig, ax = plt.subplots()
     img = librosa.display.specshow(mfcc_original, sr=sr_original, x_axis='time')
     ax.plot(np.array(path).T, color='r')
