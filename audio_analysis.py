@@ -34,8 +34,8 @@ if original_file and user_file:
     mfcc_user = librosa.feature.mfcc(y=y_user, sr=sr_user)
 
     # Ensure correct shape for DTW
-    original_mfcc = mfccs_original.reshape(1, -1) if mfccs_original.ndim == 1 else mfccs_original
-    user_mfcc = mfccs_user.reshape(1, -1) if mfccs_user.ndim == 1 else mfccs_user
+    original_mfcc = mfcc_original.reshape(1, -1) if mfcc_original.ndim == 1 else mfcc_original
+    user_mfcc = mfcc_user.reshape(1, -1) if mfcc_user.ndim == 1 else mfccs_user
 
     # MFCCs are usually (n_mfcc, n_frames), transpose them for DTW
     original_mfcc = mfcc_original.T
