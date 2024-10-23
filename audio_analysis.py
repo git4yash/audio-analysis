@@ -42,7 +42,11 @@ if original_file and user_file:
     user_mfcc = mfcc_user.T
 
     # Compute DTW (Dynamic Time Warping) for rhythm comparison
-    distance, path = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y, ord=1))
+    distance, path = dtw(original_mfcc, user_mfcc, dist=lambda x, y: np.linalg.norm(x - y))
+
+    # Verify that the path is returned correctly
+    if isinstance(path, tuple):
+        path = path[0]  # Only take the first element if it's a tuple
 
     # Display the MFCC comparison
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
