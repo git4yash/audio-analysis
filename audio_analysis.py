@@ -15,8 +15,8 @@ user_file = st.file_uploader("Upload the User's Audio", type=["wav", "mp3"])
 
 if original_file and user_file:
     # Load original and user audio using librosa
-    y_original, sr_original = librosa.load(y=original_file, sr=None)
-    y_user, sr_user = librosa.load(y=user_file, sr=None)
+    y_original, sr_original = librosa.load(original_file, sr=None)
+    y_user, sr_user = librosa.load(user_file, sr=None)
     
     # Display the waveforms
     st.write("Waveform of the Original Audio:")
