@@ -148,6 +148,62 @@ if original_file and user_file:
     # Display plot
     st.pyplot(fig)
 
+
+    ## New graph
+    # Compute DTW for rhythm comparison
+    dtw_result = dtw(mfcc_original.T, mfcc_user.T, dist=lambda x, y: np.linalg.norm(x - y))
+    distance = dtw_result[0]
+    path = dtw_result[2]
+
+    # Compute pitch contours
+    pitches_original, magnitudes_original = librosa.piptrack(y=y_original, sr=sr_original)
+    pitches_user, magnitudes_user = librosa.piptrack(y=y_user, sr=sr_user)
+
+    # Extract the dominant pitch for each time frame
+    pitch_contour_original = [np.max(pitches_original[:, t]) for t in range(pitches_original.shape[1])]
+    pitch_contour_user = [np.max(pitches_user[:, t]) for t in range(pitches_user.shape[1])]
+
+    # Create pitch difference array and time axis
+    pitch_diff = np.abs(np.array(pitch_contour_original) - np.array(pitch_contour_user))
+    time_axis = np.linspace(0, len(pitch_contour_original)/sr_original, num=len(pitch_contour_original))
+
+    # Volume (Amplitude) Analysis
+    def compute_rms(y):
+        return np.sqrt(np.mean(y**2))
+
+    rms_original = compute_rms(y_original)
+    rms_user = compute_rms(y_user)
+
+    # Create overlay plot
+    st.write("Performance Comparison Overlay (Including Tune Differences):")
+
+    fig, ax = plt.subplots()
+
+    # Plot waveforms
+    librosa.display.waveshow(y_original, sr=sr_original, ax=ax, label='Original', alpha=0.5)
+    librosa.display.waveshow(y_user, sr=sr_user, ax=ax, label='User', alpha=0.5)
+
+    # Plot pitch contours (for tune comparison)
+    ax2 = ax.twinx()  # Create a secondary y-axis for pitch
+    ax2.plot(time_axis, pitch_contour_original, label="Original Pitch", color='green', alpha=0.7)
+    ax2.plot(time_axis, pitch_contour_user, label="User Pitch", color='orange', alpha=0.7)
+
+    # Highlight areas where tune needs improvement
+    for i, diff in enumerate(pitch_diff):
+        if diff > 1:  # 1 Hz threshold for significant difference
+            ax2.axvspan(time_axis[i], time_axis[i+1] if i+1 < len(time_axis) else time_axis[i], 
+                        color='red', alpha=0.3, label="Tune Correction Needed" if i == 0 else "")
+
+    ax.set_ylabel('Amplitude')
+    ax2.set_ylabel('Pitch (Hz)')
+    ax.set_xlabel('Time (s)')
+    ax.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+
+    # Display plot
+    st.pyplot(fig)
+    ##
+        
     st.write(f"DTW distance (rhythm comparison): {distance:.2f}")
     st.write(f"Pitch difference: {pitch_diff:.2f} Hz")
     st.write(f"RMS Volume of Original: {rms_original:.2f}, User: {rms_user:.2f}")
